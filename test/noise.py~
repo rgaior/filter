@@ -1,0 +1,40 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import sys
+cwd = os.getcwd()
+classpath = cwd + '/../classes/'
+utilspath = cwd + '/../utils/'
+sys.path.append(utilspath)
+sys.path.append(classpath)
+import utils
+import simulation
+
+
+sim = simulation.Simulation()
+
+#sim.producetime()
+#sim.producenoise(0,1)
+
+ax1 = plt.subplot2grid((2,2), (0,0), colspan=2)
+ax2 = plt.subplot2grid((2,2), (1,0))
+ax2 = plt.subplot2grid((2,2), (,1))
+#ax3 = plt.subplot2grid((1,2), (0, 1), rowspan=1)
+
+
+# sim.producesignal(6e-6,20e-9)
+# plt.subplot(311)
+# plt.plot(sim.time, sim.noise)
+# plt.subplot(312)
+# plt.plot(sim.time, sim.signal)
+# plt.subplot(313)
+# plt.plot(sim.time, sim.signal + sim.noise)
+# fig1 = plt.figure(figsize = (8,8))
+# n, bins, patches = plt.hist(patinstallhorn, 10, facecolor='green', alpha=0.75, label='horn')
+# n1, bins1, patches1 = plt.hist(patinstallhelix, 10, facecolor='red', alpha=0.75, label='helix')
+# plt.xlabel('power at installation [dBm]', fontsize =15)
+# plt.ylabel('entries',fontsize = 15)
+# plt.legend(fontsize=15)
+
+
+plt.show()

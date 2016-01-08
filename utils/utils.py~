@@ -1,0 +1,12 @@
+import numpy as np
+
+
+###############################################
+####  producing functions                 #####
+###############################################
+
+
+def wf_normal(mean,sigma,nrofsamples):
+    return np.random.normal(mean,sigma,nrofsample)
+
+

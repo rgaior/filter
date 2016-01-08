@@ -1,0 +1,22 @@
+import utils
+import math
+import numpy as np
+
+class Detector:
+    def __init__(self, temp, gain, tau):
+        self.temp = temp
+        self.gain = gain
+        self.tau = tau
+        
+#     def reset(self):
+#         self.time = []
+#         self.horndet = []
+        
+    def produceresponse(self,signal):
+        tend = 500e-9
+        x = np.arange(0,tend,0.2e-9)
+        convfunc = np.exp(-x/self.tau)/( -(math.exp(-tend/self.tau) - 1)*self.tau)
+        signal = np.log10(signal*signal)
+        resp = np.convolve(signal,convfunc)
+        return resp
+        self.signal = envelope*10*signal

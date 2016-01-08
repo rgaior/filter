@@ -1,0 +1,38 @@
+import utils
+import numpy as np
+
+class Simulation:
+    def __init__(self, noisedist = '', 
+                 snr = 0,
+                 siglength = 0,
+                 sigdist = ''
+                 ):
+
+        self.noisedist = noisedist
+        self.snr = snr
+        self.siglenth = siglength
+        self.sigdist = sigdist
+        
+        self.time = np.array([])
+        self.noise = np.array([])
+        self.signal = np.array([])
+        self.wf = np.array([])
+        
+        self.tracelength = 10e-6 #s
+        self.sampling = 5e9 #Hz
+        
+#     def reset(self):
+#         self.time = []
+#         self.horndet = []
+        
+    def producetime(self):
+        self.time = np.arange(0,self.tracelength,1./self.sampling)
+
+    def producenoise(self, mean, sigma):
+        self.noise = utils.wf_normal(mean,sigma,len(self.time))
+
+    def producesignal(self, mean, sigma):
+        signal = utils.wf_normal(0,1,len(self.time))
+        envelope = utils.func_normedgauss(self.time,mean,sigma)
+        
+        self.signal = envelope*10*signal
