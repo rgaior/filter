@@ -31,24 +31,22 @@ thesignal = sim.noise + sim.signal
 wf = det.produceresponse(thesignal)
 x = np.linspace(0, float(len(wf))/sim.sampling, len(wf))
 fig1 = plt.figure(figsize = (8,8))
-plt.subplot(211)
-plt.plot(sim.time*1e6, thesignal)
-plt.xlabel('time [us]')
-plt.ylabel('amplitude [V]')
-plt.subplot(212)
-plt.plot(x*1e6, wf)
-plt.xlabel('time [us]')
-plt.ylabel('power [dBm]')
 
-mean = np.mean(wf)
-std = np.std(wf)
+ax1 = plt.subplot(311)
+ax1.plot(sim.time*1e6, thesignal)
+#ax1.set_xlabel('time [us]')
+ax1.set_ylabel('amplitude [V]')
 
-# fig2 = plt.figure()
-# ax1 = plt.subplot(111)
-# n1, bins1, patches1 = ax1.hist(wf, 50, facecolor='red', alpha=0.75)
-# ax1.text(0.95, 0.90, 'mean = ' + str(mean) + '\n' + 'std = '+ str(std),
-#         verticalalignment='bottom', horizontalalignment='right',
-#         transform=ax1.transAxes,
-#         color='black', fontsize=15)
+ax2 = plt.subplot(312,sharex = ax1)
+ax2.plot(x*1e6, wf)
+#ax2.set_xlabel('time [us]')
+ax2.set_ylabel('power [dBm]')
+pdvoltage = det.powerdetlinear(wf)
+adaptvoltage = det.adaptationboard(pdvoltage)
+ax3 = plt.subplot(313,sharex=ax1)
+ax3.plot(x*1e6,adaptvoltage)
+ax3.set_xlabel('time [us]')
+ax3.set_ylabel('board amplitude [V]')
+
 
 plt.show()

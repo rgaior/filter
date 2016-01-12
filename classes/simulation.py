@@ -24,7 +24,7 @@ class Simulation:
         self.wf = np.array([])
         
         #hardcoded
-        self.tracelength = 5e-6 #s
+        self.tracelength = 10e-6 #s
         self.sampling = 5e9 #Hz
         self.sigtime = self.tracelength/4
         

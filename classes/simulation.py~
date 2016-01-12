@@ -1,25 +1,32 @@
 import utils
+import math
 import numpy as np
+import constant
 
 class Simulation:
     def __init__(self, noisedist = '', 
                  snr = 0,
                  siglength = 0,
-                 sigdist = ''
+                 sigdist = '',
+                 det = None,
                  ):
 
-        self.noisedist = noisedist
+        self.det = det
         self.snr = snr
+        self.noisedist = noisedist
         self.siglenth = siglength
         self.sigdist = sigdist
         
         self.time = np.array([])
         self.noise = np.array([])
         self.signal = np.array([])
+        self.envelope = np.array([])
         self.wf = np.array([])
         
-        self.tracelength = 10e-6 #s
+        #hardcoded
+        self.tracelength = 5e-6 #s
         self.sampling = 5e9 #Hz
+        self.sigtime = self.tracelength/4
         
 #     def reset(self):
 #         self.time = []
@@ -28,11 +35,15 @@ class Simulation:
     def producetime(self):
         self.time = np.arange(0,self.tracelength,1./self.sampling)
 
-    def producenoise(self, mean, sigma):
-        self.noise = utils.wf_normal(mean,sigma,len(self.time))
+    def producenoise(self):
+        Pnoise = constant.kb*self.det.temp*self.det.bw 
+        Vnoise = np.sqrt(constant.impedance*Pnoise)
+        self.noise = utils.wf_normal(0,Vnoise,len(self.time))
 
-    def producesignal(self, mean, sigma):
-        signal = utils.wf_normal(0,1,len(self.time))
-        envelope = utils.func_normedgauss(self.time,mean,sigma)
-        
-        self.signal = envelope*10*signal
+    def producesignal(self):
+        Pnoise = constant.kb*self.det.temp*self.det.bw 
+        Vnoise = np.sqrt(constant.impedance*Pnoise)
+        signal = utils.wf_normal(0,Vnoise,len(self.time))
+        envelope = utils.func_normedgauss(self.time,self.sigtime,self.siglenth)
+        self.envelope = envelope
+        self.signal = envelope*math.sqrt(self.snr)*signal
