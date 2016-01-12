@@ -1,4 +1,5 @@
 import utils
+import math
 import numpy as np
 import constant
 
@@ -19,10 +20,11 @@ class Simulation:
         self.time = np.array([])
         self.noise = np.array([])
         self.signal = np.array([])
+        self.envelope = np.array([])
         self.wf = np.array([])
         
         #hardcoded
-        self.tracelength = 10e-6 #s
+        self.tracelength = 5e-6 #s
         self.sampling = 5e9 #Hz
         self.sigtime = self.tracelength/4
         
@@ -43,4 +45,5 @@ class Simulation:
         Vnoise = np.sqrt(constant.impedance*Pnoise)
         signal = utils.wf_normal(0,Vnoise,len(self.time))
         envelope = utils.func_normedgauss(self.time,self.sigtime,self.siglenth)
-        self.signal = envelope*self.snr*signal
+        self.envelope = envelope
+        self.signal = envelope*math.sqrt(self.snr)*signal
