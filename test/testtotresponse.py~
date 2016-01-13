@@ -31,11 +31,14 @@ sim.producesignal()
 
 thesignal = sim.noise + sim.signal
 
-wf = det.producesimtrace(sim.time, thesignal, sim.sampling, 'adc')
+simwf = waveform.Waveform(sim.time,thesignal, type='hf')
+wf = det.producesimwaveform(simwf,'adc')
+
+wf = det.producesimtrace(sim.time, thesignal, sim.sampling, 'logresponse')
 
 fig1 = plt.figure(figsize = (8,8))
 ax1 = plt.subplot(111)
 ax1.plot(wf[0], wf[1],label='signal after adapt. board')
 
 plt.legend()
-
+plt.show()

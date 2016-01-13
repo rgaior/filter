@@ -5,7 +5,7 @@ from scipy import signal
 import constant
 
 class Waveform:
-    def __init__(self, time = [], amp =[]):
+    def __init__(self, time = [], amp =[],type = ''):
         self.time = time
         self.amp = amp
         self.sampling = self.time[1] - self.time[0]

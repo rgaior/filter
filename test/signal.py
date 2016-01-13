@@ -21,6 +21,10 @@ bw= 8e8
 tau = 5e-9
 det = detector.Detector(tsys, gain, bw,tau)
 
+#usage:
+if len(sys.argv) != 3:
+    print 'usage: python signal  <snr>  <signallength [s]>'
+    sys.exit()
 givensnr = float(sys.argv[1])
 givensiglength = float(sys.argv[2])
 sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)

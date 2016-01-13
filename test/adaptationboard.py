@@ -13,7 +13,7 @@ sys.path.append(classpath)
 import utils
 import simulation
 import detector
-
+import waveform
 #temp, gain, bw, tau of power det
 tsys = 50
 gain = 1e6
@@ -31,23 +31,22 @@ sim.producesignal()
 
 thesignal = sim.noise + sim.signal
 
-wf = det.produceresponse(thesignal)
-x = np.linspace(0, float(len(wf))/sim.sampling, len(wf))
-fig1 = plt.figure(figsize = (8,8))
+simwf = waveform.Waveform(sim.time,thesignal, type='hf')
+pdwf = det.producesimwaveform(simwf,'powerdetector')
 
+boardwf = det.adaptationboard(pdwf)
+
+fig1 = plt.figure(figsize = (8,8))
 ax1 = plt.subplot(311)
-ax1.plot(sim.time*1e6, thesignal)
-#ax1.set_xlabel('time [us]')
+ax1.plot(simwf.time*1e6, simwf.amp)
 ax1.set_ylabel('amplitude [V]',fontsize=15)
 
 ax2 = plt.subplot(312,sharex = ax1)
-ax2.plot(x*1e6, wf)
+ax2.plot(pdwf.time*1e6, pdwf.amp)
 #ax2.set_xlabel('time [us]')
-ax2.set_ylabel('power [dBm]',fontsize=15)
-pdvoltage = det.powerdetlinear(wf)
-adaptvoltage = det.adaptationboard(pdvoltage)
+ax2.set_ylabel('power det. [V]',fontsize=15)
 ax3 = plt.subplot(313,sharex=ax1)
-ax3.plot(x*1e6,adaptvoltage)
+ax3.plot(boardwf.time*1e6,boardwf.amp)
 ax3.set_xlabel('time [us]',fontsize=15)
 ax3.set_ylabel('board amplitude [V]',fontsize=15)
 

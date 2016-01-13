@@ -10,7 +10,7 @@ sys.path.append(classpath)
 import utils
 import simulation
 import detector
-
+import waveform
 #temp, gain, bw, tau of power det
 tsys = 50
 gain = 1e6
@@ -27,21 +27,23 @@ sim.producenoise()
 sim.producesignal()
 
 thesignal = sim.noise + sim.signal
+simwf = waveform.Waveform(sim.time,thesignal, type='hf')
+wf = det.producesimwaveform(simwf,'logresponse')
+pdwf = det.powerdetlinear(wf)
 
-wf = det.produceresponse(thesignal)
-x = np.linspace(0, float(len(wf))/sim.sampling, len(wf))
 fig1 = plt.figure(figsize = (8,8))
 plt.subplot(311)
-plt.plot(sim.time*1e6, thesignal)
+plt.plot(simwf.time*1e6, simwf.amp)
 plt.xlabel('time [us]')
 plt.ylabel('amplitude [V]')
+
 plt.subplot(312)
-plt.plot(x*1e6, wf)
+plt.plot(wf.time, wf.amp)
 plt.xlabel('time [us]')
 plt.ylabel('power [dBm]')
-pdvoltage = det.powerdetlinear(wf)
+
 plt.subplot(313)
-plt.plot(x*1e6,pdvoltage)
+plt.plot(pdwf.time*1e6,pdwf.amp)
 plt.xlabel('time [us]')
 plt.ylabel('power det amplitude [V]')
 

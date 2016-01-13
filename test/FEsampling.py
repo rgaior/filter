@@ -13,6 +13,7 @@ sys.path.append(classpath)
 import utils
 import simulation
 import detector
+import waveform
 
 #temp, gain, bw, tau of power det
 tsys = 50
@@ -31,28 +32,24 @@ sim.producesignal()
 
 thesignal = sim.noise + sim.signal
 
-wf = det.produceresponse(thesignal,sim.sampling)
-wf = det.powerdetlinear(wf)
-wf = det.adaptationboard(wf)
-x = np.linspace(0, float(len(wf))/sim.sampling, len(wf))
-print len(x) , ' ' , len(sim.time)
-filt = det.FEfilter(wf,sim.sampling)
-timesamp = det.FEtimesampling(x,filt)
-ampsamp = det.FEampsampling(timesamp[1])
+simwf = waveform.Waveform(sim.time,thesignal, type='hf')
+wf = det.producesimwaveform(simwf,'fefilter')
+
+timesamp = det.FEtimesampling(wf)
+ampsamp = det.FEampsampling(timesamp)
 
 fig1 = plt.figure(figsize = (8,8))
 ax1 = plt.subplot(211)
-ax1.plot(x*1e6, wf,label='signal after adapt. board')
-ax1.plot(x*1e6,filt,'r',lw=2,label='signal after FE filter')
-ax1.plot(timesamp[0]*1e6,timesamp[1],'ko',label='time sampled')
+ax1.plot(wf.time*1e6,wf.amp,'r',lw=2,label='signal after FE filter')
+ax1.plot(timesamp.time*1e6,timesamp.amp,'ko',label='time sampled')
 
-ax1.set_xlim(1,3)
+#ax1.set_xlim(1,3)
 ax1.set_xlabel('time [us]')
 ax1.set_ylabel('amplitude [V]',fontsize=15)
 plt.legend()
 
 ax2 = plt.subplot(212)
-ax2.plot(timesamp[0]*1e6,ampsamp,'o-')
+ax2.plot(ampsamp.time*1e6,ampsamp.amp,'o-')
 # ax2.loglog(freq*1e-6,specfiltcarre,'r')
 ax2.set_xlabel('time [us]',fontsize=15)
 ax2.set_ylabel('amplitude [V]',fontsize=15)

@@ -13,6 +13,7 @@ sys.path.append(classpath)
 import utils
 import simulation
 import detector
+import waveform
 
 #temp, gain, bw, tau of power det
 tsys = 50
@@ -30,25 +31,25 @@ sim.producenoise()
 sim.producesignal()
 
 thesignal = sim.noise + sim.signal
+simwf = waveform.Waveform(sim.time,thesignal, type='hf')
 
-wf = det.produceresponse(thesignal)
-wf = det.powerdetlinear(wf)
-wf = det.adaptationboard(wf)
+wf = det.producesimwaveform(simwf,'board')
 
-x = np.linspace(0, float(len(wf))/sim.sampling, len(wf))
-filt = det.FEfilter(wf,sim.sampling)
+filt = det.FEfilter(wf)
+x = filt.time
+
 fig1 = plt.figure(figsize = (8,8))
 ax1 = plt.subplot(211)
-ax1.plot(x*1e6, wf,label='signal after adapt. board')
-ax1.plot(x*1e6,filt,'r',lw=2,label='signal after FE filter')
+ax1.plot(x*1e6, wf.amp,label='signal after adapt. board')
+ax1.plot(x*1e6,filt.amp,'r',lw=2,label='signal after FE filter')
 ax1.set_xlim(1,3)
 ax1.set_xlabel('time [us]')
 ax1.set_ylabel('amplitude [V]',fontsize=15)
 plt.legend()
 ax2 = plt.subplot(212)
-spec = np.abs(np.fft.rfft(wf))
-specfilt = np.abs(np.fft.rfft(filt))
-freq = np.fft.rfftfreq(len(x),x[1] - x[0])
+spec = np.abs(np.fft.rfft(wf.amp))
+specfilt = np.abs(np.fft.rfft(filt.amp))
+freq = np.fft.rfftfreq(len(x),filt.time[1] - filt.time[0])
 #print spec
 
 speccarre = spec*spec
