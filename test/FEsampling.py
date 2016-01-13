@@ -21,7 +21,7 @@ bw= 8e8
 tau = 5e-9
 det = detector.Detector(tsys, gain, bw,tau)
 
-givensnr = 0.5
+givensnr = 10
 givensiglength = 500e-9
 sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)
 
@@ -31,10 +31,11 @@ sim.producesignal()
 
 thesignal = sim.noise + sim.signal
 
-wf = det.produceresponse(thesignal)
+wf = det.produceresponse(thesignal,sim.sampling)
 wf = det.powerdetlinear(wf)
 wf = det.adaptationboard(wf)
 x = np.linspace(0, float(len(wf))/sim.sampling, len(wf))
+print len(x) , ' ' , len(sim.time)
 filt = det.FEfilter(wf,sim.sampling)
 timesamp = det.FEtimesampling(x,filt)
 ampsamp = det.FEampsampling(timesamp[1])
