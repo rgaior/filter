@@ -35,8 +35,9 @@ sim.producesignal()
 
 thesignal = sim.noise + sim.signal
 
-wf = waveform.Waveform(sim.time,thesignal,sim.sampling, sim.tracelength, type='hf')
-det.testwaveform(wf)
+simwf = waveform.Waveform(sim.time,thesignal, type='hf')
+
+
 
 #fig1 = plt.figure(figsize = (8,8))
 #ax1 = plt.subplot(111)

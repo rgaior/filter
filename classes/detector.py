@@ -68,7 +68,7 @@ class Detector:
         newtime = np.linspace(wf.time[0], float(len(resp))/wf.sampling, len(resp))
         # response in dBm
         newamp = resp+30
-        newwf = waveform.Waveform(newtime,newamp)
+        newwf = waveform.Waveform(newtime,newamp,'logresponse')
         return newwf
 
 #power detector characteristic (P[dBm] vs V_pd[V])
