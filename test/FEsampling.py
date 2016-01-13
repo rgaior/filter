@@ -23,11 +23,12 @@ tau = 5e-9
 det = detector.Detector(tsys, gain, bw,tau)
 
 givensnr = 10
-givensiglength = 500e-9
+givensiglength = 100e-9
 sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)
 
 sim.producetime()
 sim.producenoise()
+sim.setpowerenvelope('gauss')
 sim.producesignal()
 
 thesignal = sim.noise + sim.signal
@@ -44,15 +45,12 @@ ax1.plot(wf.time*1e6,wf.amp,'r',lw=2,label='signal after FE filter')
 ax1.plot(timesamp.time*1e6,timesamp.amp,'ko',label='time sampled')
 
 #ax1.set_xlim(1,3)
-ax1.set_xlabel('time [us]')
+#ax1.set_xlabel('time [us]')
 ax1.set_ylabel('amplitude [V]',fontsize=15)
 plt.legend()
 
 ax2 = plt.subplot(212)
 ax2.plot(ampsamp.time*1e6,ampsamp.amp,'o-')
-# ax2.loglog(freq*1e-6,specfiltcarre,'r')
 ax2.set_xlabel('time [us]',fontsize=15)
-ax2.set_ylabel('amplitude [V]',fontsize=15)
-# ax2.plot(np.array([20,20]),[np.min(speccarre), np.max(specfiltcarre)],'k',lw=2)
-# ax2.set_ylim(1e-2,1e7)
+ax2.set_ylabel('amplitude [ADC]',fontsize=15)
 plt.show()

@@ -6,12 +6,16 @@ import sys
 cwd = os.getcwd()
 classpath = cwd + '/../classes/'
 utilspath = cwd + '/../utils/'
+datapath = cwd + '/../data/'
 sys.path.append(utilspath)
 sys.path.append(classpath)
 import utils
 import simulation
 import detector
 
+# power envelope file
+file = 'testenvelope.txt'
+envfile = datapath + file
 
 
 #temp, gain, bw, tau of power det
@@ -21,16 +25,13 @@ bw= 8e8
 tau = 5e-9
 det = detector.Detector(tsys, gain, bw,tau)
 
-#usage:
-if len(sys.argv) != 3:
-    print 'usage: python signal  <snr>  <signallength [s]>'
-    sys.exit()
-givensnr = float(sys.argv[1])
-givensiglength = float(sys.argv[2])
-sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)
+
+sim = simulation.Simulation(det=det)
+
 
 sim.producetime()
 sim.producenoise()
+sim.setpowerenvelopewithfile(envfile)
 sim.producesignal()
 
 fig1 = plt.figure(figsize = (8,8))
@@ -38,34 +39,32 @@ ax1 = plt.subplot2grid((3,1), (0,0))
 ax2 = plt.subplot2grid((3,1), (1,0))
 ax3 = plt.subplot2grid((3,1), (2,0))
 
-ax1.plot(sim.time*1e6, sim.noise)
+ax1.plot(sim.time*1e6, sim.powerenvelope)
 ax1.set_xlabel('time [us]',fontsize =15)
-ax1.set_ylabel('amplitude [V]',fontsize =15)
+ax1.set_ylabel('power [W]',fontsize =15)
+ax1.set_xlim(1,5)
+#ax1.set_ylim(-100000*np.min(sim.powerenvelope),1.1*np.max(sim.powerenvelope))
+ax1.set_ylim(-0.5*np.max(sim.powerenvelope),1.1*np.max(sim.powerenvelope))
 
 ax2.plot(sim.time*1e6, sim.signal)
 ax2.set_xlabel('time [us]',fontsize =15)
 ax2.set_ylabel('amplitude [V]',fontsize =15)
+ax2.set_xlim(1,5)
 
 ax3.plot(sim.time*1e6, sim.signal +sim.noise)
 ax3.set_xlabel('time [us]',fontsize =15)
 ax3.set_ylabel('amplitude [V]',fontsize =15)
-# ax1.text(0.95, 0.90, 'Tsys = '+ str("%.2f" % tsys) + ' K',
-#         verticalalignment='bottom', horizontalalignment='right',
-#         transform=ax1.transAxes,
-#         color='black', fontsize=15)
-ax2.text(0.95, 0.05, 'signal length = ' + str("%.2g" % givensiglength),
+ax3.set_xlim(1,5)
+
+ax1.text(0.95, 0.05, 'signal file = ' + file,
         verticalalignment='bottom', horizontalalignment='right',
-        transform=ax2.transAxes,
+        transform=ax1.transAxes,
         color='red', fontsize=12)
-ax2.text(0.95, 0.15, 'snr = '+ str("%.2f" % givensnr) ,
-        verticalalignment='bottom', horizontalalignment='right',
-        transform=ax2.transAxes,
-        color='red', fontsize=12)
-ax1.text(0.95, 0.85, 'noise',
+ax1.text(0.95, 0.85, 'power envelope',
         verticalalignment='bottom', horizontalalignment='right',
         transform=ax1.transAxes,
         color='black', fontsize=15)
-ax2.text(0.95, 0.85, 'signal',
+ax2.text(0.95, 0.85, 'signal in amplitude',
         verticalalignment='bottom', horizontalalignment='right',
         transform=ax2.transAxes,
         color='black', fontsize=15)
@@ -73,16 +72,6 @@ ax3.text(0.95, 0.85, 'signal + noise',
         verticalalignment='bottom', horizontalalignment='right',
         transform=ax3.transAxes,
         color='black', fontsize=15)
-# ax3.text(0.95, 0.90, 'mean = '+ str("%.2g" % mpnoise),
-#         verticalalignment='bottom', horizontalalignment='right',
-#         transform=ax3.transAxes,
-#         color='black', fontsize=12)
-
-
-#stdvnoise = np.std(sim.noise)
-# plt.xlabel('power at installation [dBm]', fontsize =15)
-# plt.ylabel('entries',fontsize = 15)
-# plt.legend(fontsize=15)
 
 
 plt.show()

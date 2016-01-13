@@ -6,6 +6,7 @@ import sys
 cwd = os.getcwd()
 classpath = cwd + '/../classes/'
 utilspath = cwd + '/../utils/'
+datapath = cwd + '/../data/'
 sys.path.append(utilspath)
 sys.path.append(classpath)
 import utils
@@ -27,10 +28,13 @@ if len(sys.argv) != 3:
     sys.exit()
 givensnr = float(sys.argv[1])
 givensiglength = float(sys.argv[2])
+
 sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)
+
 
 sim.producetime()
 sim.producenoise()
+sim.setpowerenvelope('gauss')
 sim.producesignal()
 
 fig1 = plt.figure(figsize = (8,8))
@@ -53,6 +57,7 @@ ax3.set_ylabel('amplitude [V]',fontsize =15)
 #         verticalalignment='bottom', horizontalalignment='right',
 #         transform=ax1.transAxes,
 #         color='black', fontsize=15)
+
 ax2.text(0.95, 0.05, 'signal length = ' + str("%.2g" % givensiglength),
         verticalalignment='bottom', horizontalalignment='right',
         transform=ax2.transAxes,
@@ -73,16 +78,6 @@ ax3.text(0.95, 0.85, 'signal + noise',
         verticalalignment='bottom', horizontalalignment='right',
         transform=ax3.transAxes,
         color='black', fontsize=15)
-# ax3.text(0.95, 0.90, 'mean = '+ str("%.2g" % mpnoise),
-#         verticalalignment='bottom', horizontalalignment='right',
-#         transform=ax3.transAxes,
-#         color='black', fontsize=12)
-
-
-#stdvnoise = np.std(sim.noise)
-# plt.xlabel('power at installation [dBm]', fontsize =15)
-# plt.ylabel('entries',fontsize = 15)
-# plt.legend(fontsize=15)
 
 
 plt.show()

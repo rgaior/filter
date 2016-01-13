@@ -39,6 +39,7 @@ for snr in givensnr:
         
         sim.producetime()
         sim.producenoise()
+        sim.setpowerenvelope('gauss')
         sim.producesignal()
 
         thesignal = sim.noise + sim.signal

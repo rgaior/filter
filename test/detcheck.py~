@@ -13,6 +13,7 @@ sys.path.append(classpath)
 import utils
 import simulation
 import detector
+import waveform
 from scipy.optimize import curve_fit
 
 def func(x, a, sigma,mu,b):
@@ -26,7 +27,6 @@ bw= 8e8
 tau = 5e-9
 det = detector.Detector(tsys, gain, bw,tau)
 
-#givensnr = [1,2, 10, 50, 100]
 givensnr = [1,2,10,50,100]
 snrtable = np.ndarray(shape = (len(givensnr),nrofsample ), dtype=float)
 givensiglength = 100e-9
@@ -42,11 +42,12 @@ for snr in givensnr:
         sim.producesignal()
 
         thesignal = sim.noise + sim.signal
-    
-        wf = det.produceresponse(thesignal)
-        x = np.linspace(0, float(len(wf))/sim.sampling, len(wf))
+        simwf = waveform.Waveform(sim.time,thesignal, type='hf')
+
+        wf = det.produceresponse(simwf)
+        x = wf.time
         x = 1e6*x
-        popt, pcov = curve_fit(func, x, wf, p0=[10*snr,0.03,2,-25])
+        popt, pcov = curve_fit(func, x, wf.amp, p0=[10*snr,0.03,2,-25])
         fitted = func(x,popt[0],popt[1],popt[2],popt[3])
         noiseafter = np.mean(fitted[len(fitted)/2:])
         sigafter = np.max(fitted)

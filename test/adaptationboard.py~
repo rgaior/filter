@@ -34,7 +34,7 @@ thesignal = sim.noise + sim.signal
 simwf = waveform.Waveform(sim.time,thesignal, type='hf')
 pdwf = det.producesimwaveform(simwf,'powerdetector')
 
-boardwf = det.adaptationboard(wf)
+boardwf = det.adaptationboard(pdwf)
 
 fig1 = plt.figure(figsize = (8,8))
 ax1 = plt.subplot(311)

@@ -13,7 +13,7 @@ sys.path.append(classpath)
 import utils
 import simulation
 import detector
-
+import waveform
 #temp, gain, bw, tau of power det
 tsys = 50
 gain = 1e6
@@ -22,7 +22,8 @@ tau = 5e-9
 det = detector.Detector(tsys, gain, bw,tau)
 
 givensnr = 10
-givensiglength = 500e-9
+givensiglength = 100e-9
+
 sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)
 
 sim.producetime()
@@ -34,11 +35,10 @@ thesignal = sim.noise + sim.signal
 simwf = waveform.Waveform(sim.time,thesignal, type='hf')
 wf = det.producesimwaveform(simwf,'adc')
 
-wf = det.producesimtrace(sim.time, thesignal, sim.sampling, 'logresponse')
 
 fig1 = plt.figure(figsize = (8,8))
 ax1 = plt.subplot(111)
-ax1.plot(wf[0], wf[1],label='signal after adapt. board')
+ax1.plot(wf.time, wf.amp,label=wf.type)
 
 plt.legend()
 plt.show()

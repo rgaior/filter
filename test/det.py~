@@ -30,7 +30,7 @@ sim.producesignal()
 thesignal = sim.noise + sim.signal
 
 simwf = waveform.Waveform(sim.time,thesignal, type='hf')
-wf = det.produceresponse(thesignal)
+wf = det.produceresponse(simwf)
 
 fig1 = plt.figure(figsize = (8,8))
 plt.subplot(211)
@@ -41,8 +41,5 @@ plt.subplot(212)
 plt.plot(wf.time*1e6, wf.amp)
 plt.xlabel('time [us]')
 plt.ylabel('power [dBm]')
-
-mean = np.mean(wf)
-std = np.std(wf)
 
 plt.show()

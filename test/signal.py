@@ -31,6 +31,7 @@ sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)
 
 sim.producetime()
 sim.producenoise()
+sim.setpowerenvelope('gauss')
 sim.producesignal()
 
 fig1 = plt.figure(figsize = (8,8))

@@ -6,12 +6,16 @@ import sys
 cwd = os.getcwd()
 classpath = cwd + '/../classes/'
 utilspath = cwd + '/../utils/'
+datapath = cwd + '/../data/'
 sys.path.append(utilspath)
 sys.path.append(classpath)
 import utils
 import simulation
 import detector
 
+# power envelope file
+file = 'testenvelope.txt'
+envfile = datapath + file
 
 
 #temp, gain, bw, tau of power det
@@ -21,17 +25,15 @@ bw= 8e8
 tau = 5e-9
 det = detector.Detector(tsys, gain, bw,tau)
 
-#usage:
-if len(sys.argv) != 3:
-    print 'usage: python signal  <snr>  <signallength [s]>'
-    sys.exit()
-givensnr = float(sys.argv[1])
-givensiglength = float(sys.argv[2])
-sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)
+
+sim = simulation.Simulation(det=det)
+
 
 sim.producetime()
 sim.producenoise()
+sim.setpowerenvelopewithfile(envfile)
 sim.producesignal()
+print sim.powerenvelope
 
 fig1 = plt.figure(figsize = (8,8))
 ax1 = plt.subplot2grid((3,1), (0,0))
@@ -53,11 +55,8 @@ ax3.set_ylabel('amplitude [V]',fontsize =15)
 #         verticalalignment='bottom', horizontalalignment='right',
 #         transform=ax1.transAxes,
 #         color='black', fontsize=15)
-ax2.text(0.95, 0.05, 'signal length = ' + str("%.2g" % givensiglength),
-        verticalalignment='bottom', horizontalalignment='right',
-        transform=ax2.transAxes,
-        color='red', fontsize=12)
-ax2.text(0.95, 0.15, 'snr = '+ str("%.2f" % givensnr) ,
+
+ax2.text(0.95, 0.05, 'signal file = ' + file,
         verticalalignment='bottom', horizontalalignment='right',
         transform=ax2.transAxes,
         color='red', fontsize=12)
@@ -73,16 +72,6 @@ ax3.text(0.95, 0.85, 'signal + noise',
         verticalalignment='bottom', horizontalalignment='right',
         transform=ax3.transAxes,
         color='black', fontsize=15)
-# ax3.text(0.95, 0.90, 'mean = '+ str("%.2g" % mpnoise),
-#         verticalalignment='bottom', horizontalalignment='right',
-#         transform=ax3.transAxes,
-#         color='black', fontsize=12)
-
-
-#stdvnoise = np.std(sim.noise)
-# plt.xlabel('power at installation [dBm]', fontsize =15)
-# plt.ylabel('entries',fontsize = 15)
-# plt.legend(fontsize=15)
 
 
 plt.show()
