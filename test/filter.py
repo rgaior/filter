@@ -28,18 +28,21 @@ sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)
 
 sim.producetime()
 sim.producenoise()
-sim.setpowerenvelope('gauss')
-sim.producesignal()
+noise = sim.noise
 
-thesignal = sim.noise + sim.signal
-
-simwf = waveform.Waveform(sim.time,thesignal, type='hf')
-wf = det.producesimwaveform(simwf,'adc')
-
+freq = np.fft.rfftfreq(len(sim.time), 1./sim.sampling)
+filtered = utils.lowpass(noise,sim.sampling,6,1e8)
+spec = np.absolute(np.fft.rfft(noise))
+specfilt = np.absolute(np.fft.rfft(filtered))
 
 fig1 = plt.figure(figsize = (8,8))
-ax1 = plt.subplot(111)
-ax1.plot(wf.time, wf.amp,label=wf.type)
+ax1 = plt.subplot(211)
+ax1.plot(sim.time, noise)
+ax1.plot(sim.time, filtered)
 
-plt.legend()
+ax2 = plt.subplot(212)
+ax2.loglog(freq, spec*spec)
+ax2.loglog(freq, specfilt*specfilt)
+
+#plt.legend()
 plt.show()

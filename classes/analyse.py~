@@ -4,30 +4,15 @@ import numpy as np
 import constant
 #import waveform
 
-class Simulation:
-    def __init__(self, snr = 0,
-                 siglength = 0,
-                 det = None):
+class Analyse:
+    def __init__(self, det = None):
         
-        self.snr = snr
         self.det = det
-        self.siglength = siglength
-        
-        self.powerenvelope = np.array([])
- 
-        self.time = np.array([])
-        self.noise = np.array([])
-        self.signal = np.array([])
-        self.envelope = np.array([])
-        self.wf = np.array([])
-        
-        #hardcoded
-        self.tracelength = 10e-6 #s
-        self.sampling = 5e9 #Hz
-        self.sigtime = self.tracelength/4
 
 
-    def producetime(self):
+    def producetWwaveform(self, wf):
+        
+        
         self.time = np.arange(0,self.tracelength,1./self.sampling)
         
     #produce the noise samples (according gauss dist)

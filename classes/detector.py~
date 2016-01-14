@@ -95,7 +95,6 @@ class Detector:
         step = float(1./fesampling)
         tracelength = wf.length
         nrofpoints = int(tracelength/step)
-        print 'step = ' , step , ' nrofpoint = ', nrofpoints, 'tracelenght = ', wf.length, ' start = ' , wf.tstart, ' stop  ' ,wf.tend
         newtime = np.linspace(wf.tstart,wf.tend,nrofpoints)
         newy = np.interp(newtime,wf.time,wf.amp)
         newwf = waveform.Waveform(newtime,newy,'timesampled')

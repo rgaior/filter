@@ -14,6 +14,8 @@ import utils
 import simulation
 import detector
 import waveform
+import analyse
+
 #temp, gain, bw, tau of power det
 tsys = 50
 gain = 1e6
@@ -21,8 +23,8 @@ bw= 8e8
 tau = 5e-9
 det = detector.Detector(tsys, gain, bw,tau)
 
-givensnr = 10
-givensiglength = 100e-9
+givensnr = 0.01
+givensiglength = 200e-9
 
 sim = simulation.Simulation(det=det, snr=givensnr, siglength = givensiglength)
 
@@ -36,10 +38,21 @@ thesignal = sim.noise + sim.signal
 simwf = waveform.Waveform(sim.time,thesignal, type='hf')
 wf = det.producesimwaveform(simwf,'adc')
 
+an =analyse.Analyse(det = det)
+wattwf = an.producepowerwaveform(wf)
+sigmawf = an.producesigmawaveform(wattwf)
+meanwf = an.producemeanwaveform(wattwf)
+# meanp = np.mean(newwf.amp)
+# stdp = np.std(newwf.amp)
+
+
+# print 'mean = '  , meanp ,' std = ', stdp
+# print 'tau = ', (meanp/stdp)**2 * (1/(2*det.bw))
+
 
 fig1 = plt.figure(figsize = (8,8))
 ax1 = plt.subplot(111)
-ax1.plot(wf.time, wf.amp,label=wf.type)
+ax1.plot(wattwf.time, wattwf.amp,label=wattwf.type)
 
 plt.legend()
 plt.show()

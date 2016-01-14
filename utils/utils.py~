@@ -14,9 +14,9 @@ def readsimfile(file):
     time = np.array([])
     power = np.array([])
     for l in f:
-        lsplit = l.split()[0]
+        lsplit = l.split()
         time = np.append(time,float(lsplit[0]))
-        power = np.append(power,float(lsplit[0]))
+        power = np.append(power,float(lsplit[1]))
     return [time,power]
 
 
@@ -36,8 +36,28 @@ def func_normedgauss(x,mean,sigma):
     return a
 
 
+
 ###############################################
-####  waveform modif                      #####
+#### conversion function (voltage to adc, #####
+#### voltage FE to voltage board etc... ) #####
 ###############################################
-def resample(timeold,ampold,newtime):
+#for np array
+#adc counts to volt at the FE input (between 0-1V)
+def adctov_fe(adc):
+    return adc.astype(float)/1024
+def v_fetoadc(vfe):
+    return vfe.astype(float)*1024
+
+#voltage at front end to voltage at GIGAS/EASIER board
+def v_fetov_board(vfe):
+    return vfe*(-2)
+def v_boardtov_fe(vboard):
+    return vboard*(-1/2)
+
+#adc to v board (between -2 and 0 V)
+def adctov_board(adc):
+    return v_fetov_board(adctov_fe(adc))
+def v_boardtoadc(vboard):
+    return v_fetoadc(v_boardtov_fe(vboard))
+
 
