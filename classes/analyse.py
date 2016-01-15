@@ -41,6 +41,11 @@ class Analyse:
         newwf = waveform.Waveform(wf.time,filtamp,'an_filt')
         return newwf
 
+    def lowpasshard(self, wf, fcut):
+        filtamp = utils.lowpasshard(wf.amp,wf.sampling,fcut)
+        newwf = waveform.Waveform(wf.time,filtamp,'an_filt')
+        return newwf
+
     def crosscorrel(self, wf, envelopewf):
         newenv = np.interp(wf.time, envelopewf.time, envelopewf.amp/np.max(envelopewf.amp))
         crosscorrel = signal.correlate(wf.amp, newenv, mode='full')
@@ -55,7 +60,6 @@ class Analyse:
             indexstart = i
             indexstop = i+size
             newc = crosscorrel[indexstart:indexstop]
-            print len(newc)
             if np.sum(newc) > maxint:
                 maxint = np.sum(newc)
                 goodindexstart = indexstart

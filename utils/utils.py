@@ -30,6 +30,9 @@ def readsimfile(file):
 def wf_normal(mean,sigma,nrofsamples):
     return np.random.normal(mean,sigma,nrofsamples)
 
+def wf_dirac(nrofsamples):
+    return  np.append(np.array([1]),np.zeros(nrofsamples-1))
+
 
 def func_normedgauss(x,mean,sigma):
     #a = (1./(sigma*( math.sqrt(2*math.pi) )) )*np.exp(-0.5* ((x - mean)/sigma)**2 )
@@ -86,6 +89,20 @@ def lowpass(amp, sampling, order, fcut):
     b, a = signal.butter(order, ratiofcut, 'low')
     filtered = signal.filtfilt(b, a, amp)
     return filtered
+
+def lowpasshard(amp, sampling, fcut):
+    fft = np.fft.rfft(amp)
+    freq = np.fft.rfftfreq(len(fft),float(1./sampling))
+    Nyfreq = sampling/2
+    min = np.min(np.absolute(fft))
+    ratiofcut = float(fcut)/Nyfreq
+    size = len(fft)
+    newpass = fft[:int(ratiofcut*size)]
+    sizeofzeros = size - len(newpass)
+    newcut = np.zeros(sizeofzeros)
+    newfft = np.append(newpass,newcut)
+    out = np.fft.irfft(newfft)
+    return out.real
 
 def highpass(amp, sampling, order, fcut):
     Nyfreq = sampling/2

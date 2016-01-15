@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import signal
 import math
 
 
@@ -61,3 +62,34 @@ def v_boardtoadc(vboard):
     return v_fetoadc(v_boardtov_fe(vboard))
 
 
+def dbmtowatt(dbm):
+    return 10*np.power(10., (dbm - 30) /10)
+
+def dbtowatt(db):
+    return 10*np.power(10., db)
+
+def watttodb(db):
+    return 10*np.log10(db)
+
+def watttodbm(dbm):
+    return 10*np.log10(dbm)
+
+
+
+###############################################
+####              filtering               #####
+###############################################
+
+def lowpass(amp, sampling, order, fcut):
+    Nyfreq = sampling/2
+    ratiofcut = float(fcut)/Nyfreq
+    b, a = signal.butter(order, ratiofcut, 'low')
+    filtered = signal.filtfilt(b, a, amp)
+    return filtered
+
+def highpass(amp, sampling, order, fcut):
+    Nyfreq = sampling/2
+    ratiofcut = float(fcut)/Nyfreq
+    b, a = signal.butter(order, ratiofcut, 'high')
+    filtered = signal.filtfilt(b, a, amp)
+    return filtered
